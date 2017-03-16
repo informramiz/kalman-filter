@@ -26,7 +26,7 @@ MatrixXd I;
 //measurements
 vector<VectorXd> measurements;
 
-void predict(VectorXd &x, VectorXd &P);
+void predict(VectorXd &x, MatrixXd &P);
 void update(VectorXd &x, MatrixXd &P, VectorXd z);
 void filter(VectorXd &x, MatrixXd &P);
 void initMatrices();
@@ -88,8 +88,8 @@ void predict(VectorXd &x, MatrixXd &P) {
 
 void update(VectorXd &x, MatrixXd &P, VectorXd z) {
     VectorXd y = z - H * x;
-    VectorXd S = H * P * H.transpose() + R;
-    VectorXd K = P * H.transpose() * S.inverse();
+    MatrixXd S = H * P * H.transpose() + R;
+    MatrixXd K = P * H.transpose() * S.inverse();
     x = x + (K * y);
     P = (I - K * H) * P;
 }
@@ -97,9 +97,9 @@ void update(VectorXd &x, MatrixXd &P, VectorXd z) {
 void filter(VectorXd &x, MatrixXd &P) {
     for (unsigned int i = 0; i < measurements.size(); ++i) {
         VectorXd z = measurements[i];
-        //measurement update step
+        // measurement update step
         update(x, P, z);
-        //prediction step
+        // prediction step
         predict(x, P);
     }
 }
