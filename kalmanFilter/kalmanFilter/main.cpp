@@ -80,11 +80,14 @@ void initMatrices() {
     R << 1;
     
     I = MatrixXd::Identity(2, 2);
+    
+    Q = MatrixXd(2, 2);
+    Q << 0, 0, 0, 0;
 }
 
 void predict(VectorXd &x, MatrixXd &P) {
     x = F * x + u;
-    P = F * P * F.transpose();
+    P = F * P * F.transpose() +  Q;
 }
 
 void update(VectorXd &x, MatrixXd &P, VectorXd z) {
