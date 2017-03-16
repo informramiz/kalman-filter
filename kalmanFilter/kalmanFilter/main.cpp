@@ -15,12 +15,12 @@ using namespace std;
 using namespace Eigen;
 
 //Kalman Filter Variables
-VectorXd x;	// object state
+VectorXd x;	// object state/measurement
 MatrixXd P;	// object covariance matrix
 VectorXd u;	// external motion
 MatrixXd F; // state transition matrix
-MatrixXd H;	// measurement matrix
-MatrixXd R;	// measurement covariance matrix
+MatrixXd H;	// measurement matrix/function
+MatrixXd R;	// measurement covariance/uncertainty/noise matrix
 MatrixXd I; // Identity matrix
 MatrixXd Q;	// process covariance matrix
 
