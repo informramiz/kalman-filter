@@ -7,103 +7,91 @@
 //
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <vector>
 
 #include "Eigen/Dense"
+#include "MeasurementPackage.h"
+#include "Tracking.hpp"
 
 using namespace std;
-using namespace Eigen;
+using std::vector;
+using Eigen::MatrixXd;
+using Eigen::VectorXd;
 
-//Kalman Filter Variables
-VectorXd x;	// object state/measurement
-MatrixXd P;	// object covariance matrix
-VectorXd u;	// external motion
-MatrixXd F; // state transition matrix
-MatrixXd H;	// measurement matrix/function
-MatrixXd R;	// measurement covariance/uncertainty/noise matrix
-MatrixXd I; // Identity matrix
-MatrixXd Q;	// process covariance matrix
 
 //measurements
 vector<VectorXd> measurements;
-
-void predict(VectorXd &x, MatrixXd &P);
-void update(VectorXd &x, MatrixXd &P, VectorXd z);
-void filter(VectorXd &x, MatrixXd &P);
-void initMatrices();
-void initMeasurements();
+vector<MeasurementPackage> readMeasurements();
+void runKalmanFilter(const vector<MeasurementPackage> & measurement_pack_list);
 
 int main(int argc, const char * argv[]) {
-    // insert code here...
-    std::cout << "Hello, World!\n";
-    
-    initMatrices();
-    initMeasurements();
-    
-    filter(x, P);
-    cout << "Final x: " << endl << x << endl;
-    cout << "Final P: " << endl << P << endl;
-    
+    vector<MeasurementPackage> measurement_pack_list = readMeasurements();
+    runKalmanFilter(measurement_pack_list);
     return 0;
 }
 
-void initMeasurements() {
-    VectorXd single_measurement(1);
+void runKalmanFilter(const vector<MeasurementPackage> & measurement_pack_list) {
+    //Create a Tracking instance
+    Tracking tracking;
     
-    single_measurement << 1;
-    measurements.push_back(single_measurement);
-    
-    single_measurement << 2;
-    measurements.push_back(single_measurement);
-    
-    single_measurement << 3;
-    measurements.push_back(single_measurement);
-}
-
-void initMatrices() {
-    x = VectorXd(2);
-    x << 0, 0;
-    
-    P = MatrixXd(2, 2);
-    P << 1000, 0, 0, 100;
-    
-    u = VectorXd(2);
-    u << 0, 0;
-    
-    F = MatrixXd(2, 2);
-    F << 1, 1, 0, 1;
-    
-    H = MatrixXd(1, 2);
-    H << 1, 0;
-    
-    R = MatrixXd(1, 1);
-    R << 1;
-    
-    I = MatrixXd::Identity(2, 2);
-    
-    Q = MatrixXd(2, 2);
-    Q << 0, 0, 0, 0;
-}
-
-void predict(VectorXd &x, MatrixXd &P) {
-    x = F * x + u;
-    P = F * P * F.transpose() +  Q;
-}
-
-void update(VectorXd &x, MatrixXd &P, VectorXd z) {
-    VectorXd y = z - H * x;
-    MatrixXd S = H * P * H.transpose() + R;
-    MatrixXd K = P * H.transpose() * S.inverse();
-    x = x + (K * y);
-    P = (I - K * H) * P;
-}
-
-void filter(VectorXd &x, MatrixXd &P) {
-    for (unsigned int i = 0; i < measurements.size(); ++i) {
-        VectorXd z = measurements[i];
-        // measurement update step
-        update(x, P, z);
-        // prediction step
-        predict(x, P);
+    size_t size = measurement_pack_list.size();
+    //call processMeasurement for each measurement
+    for(size_t i = 0; i < size; ++i) {
+        tracking.processMeasurement(measurement_pack_list[i]);
     }
+}
+
+vector<MeasurementPackage> readMeasurements() {
+    
+    vector<MeasurementPackage> measurement_pack_list;
+    
+    // hardcoded input file with laser and radar measurements
+    string in_file_name = "obj_pose-laser-radar-synthetic-input.txt";
+    ifstream inFile(in_file_name.c_str(), std::ifstream::in);
+    
+    if(!inFile.is_open()) {
+        std::cout << "Can not open input file: " << in_file_name << std::endl;
+        return measurement_pack_list;
+    }
+    
+    // set i to get only first 3 measurments
+    int i = 0;
+    string line;
+    while(getline(inFile, line) && (i <= 3)) {
+        MeasurementPackage measurement_pack;
+        string sensor_type;
+        long timestamp;
+        float x;
+        float y;
+        
+        istringstream iss(line); //reads first element from the current line
+        iss >> sensor_type;
+        if (sensor_type.compare("L") == 0) { //laser measurement
+            //read measurements
+            measurement_pack.sensor_type_ = MeasurementPackage::LASER;
+            measurement_pack.raw_measurements_ = Eigen::VectorXd(2);
+            
+            iss >> x;
+            iss >> y;
+            iss >> timestamp;
+            
+            measurement_pack.raw_measurements_ << x, y;
+            measurement_pack.timestamp_ = timestamp;
+            
+            measurement_pack_list.push_back(measurement_pack);
+        } else if(sensor_type.compare("R") == 0) { //Radar measurement
+            //skip radar measurement
+            continue;
+        }
+        
+        i++;
+    }
+    
+    if(inFile.is_open()) {
+        inFile.close();
+    }
+    
+    return measurement_pack_list;
 }
