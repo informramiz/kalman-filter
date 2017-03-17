@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		B400545D1E79920900582CDE /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B400545C1E79920900582CDE /* main.cpp */; };
+		B40054651E7B4E5100582CDE /* KalmanFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B40054641E7B4E5100582CDE /* KalmanFilter.cpp */; };
+		B40054691E7B54B900582CDE /* Tracking.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B40054671E7B54B900582CDE /* Tracking.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +27,12 @@
 /* Begin PBXFileReference section */
 		B40054591E79920900582CDE /* kalmanFilter */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = kalmanFilter; sourceTree = BUILT_PRODUCTS_DIR; };
 		B400545C1E79920900582CDE /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		B40054631E7B4A4B00582CDE /* KalmanFilter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KalmanFilter.h; sourceTree = "<group>"; };
+		B40054641E7B4E5100582CDE /* KalmanFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KalmanFilter.cpp; sourceTree = "<group>"; };
+		B40054661E7B52FC00582CDE /* MeasurementPackage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MeasurementPackage.h; sourceTree = "<group>"; };
+		B40054671E7B54B900582CDE /* Tracking.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tracking.cpp; sourceTree = "<group>"; };
+		B40054681E7B54B900582CDE /* Tracking.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Tracking.hpp; sourceTree = "<group>"; };
+		B400546A1E7B618C00582CDE /* obj_pose-laser-radar-synthetic-input.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "obj_pose-laser-radar-synthetic-input.txt"; path = "EKF_DATA/obj_pose-laser-radar-synthetic-input.txt"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,6 +49,7 @@
 		B40054501E79920900582CDE = {
 			isa = PBXGroup;
 			children = (
+				B400546A1E7B618C00582CDE /* obj_pose-laser-radar-synthetic-input.txt */,
 				B400545B1E79920900582CDE /* kalmanFilter */,
 				B400545A1E79920900582CDE /* Products */,
 			);
@@ -58,6 +67,11 @@
 			isa = PBXGroup;
 			children = (
 				B400545C1E79920900582CDE /* main.cpp */,
+				B40054631E7B4A4B00582CDE /* KalmanFilter.h */,
+				B40054641E7B4E5100582CDE /* KalmanFilter.cpp */,
+				B40054661E7B52FC00582CDE /* MeasurementPackage.h */,
+				B40054671E7B54B900582CDE /* Tracking.cpp */,
+				B40054681E7B54B900582CDE /* Tracking.hpp */,
 			);
 			path = kalmanFilter;
 			sourceTree = "<group>";
@@ -120,6 +134,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				B400545D1E79920900582CDE /* main.cpp in Sources */,
+				B40054691E7B54B900582CDE /* Tracking.cpp in Sources */,
+				B40054651E7B4E5100582CDE /* KalmanFilter.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
