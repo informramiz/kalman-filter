@@ -52,9 +52,9 @@ public:
     
     /**
      * Update the state and state covariance based on 
-     * @param z, the measurement at k+1
+     * @param z the measurement at k+1
      */
-    void update(const VectorXd &z);
+    void update(const VectorXd & z);
 };
 
 
