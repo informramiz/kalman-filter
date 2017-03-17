@@ -13,8 +13,11 @@
 
 class MeasurementPackage {
 public:
+    //timestamp received from sensor in micro-seconds
     long timestamp_;
+    //raw measurements of position
     Eigen::VectorXd raw_measurements_;
+    
     enum SensorType {
         LASER, RADAR
     } sensor_type_;
