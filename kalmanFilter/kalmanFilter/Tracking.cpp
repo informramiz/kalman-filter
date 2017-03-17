@@ -28,7 +28,7 @@ Tracking::Tracking() {
     kalmanFilter_.P_ = Eigen::MatrixXd(4, 4);
     kalmanFilter_.P_ << 1, 0, 0, 0,
                         0, 1, 0, 0,
-                        0, 1, 1000, 0,
+                        0, 0, 1000, 0,
                         0, 0, 0, 1000;
     
     //measurement covariance/noise/uncertainty matrix R
@@ -78,7 +78,6 @@ void Tracking::processMeasurement(const MeasurementPackage &measurement_pack) {
     float dt = (measurement_pack.timestamp_ - previousTimestamp_) / 1000000.0;
     previousTimestamp_ = measurement_pack.timestamp_;
     
-    // TODO: YOUR CODE HERE
     //1. Modify the F matrix so that the time is integrated
     kalmanFilter_.F_(0, 2) = dt;
     kalmanFilter_.F_(1, 3) = dt;
