@@ -60,8 +60,13 @@ Eigen::MatrixXd calculateJacobian(const Eigen::VectorXd& x_state) {
     float px2 = px * px;
     float py2 = py * py;
     float px2_py2_sum = px2 + py2;
-    float px2_py2_sqrt = sqrt(px2 + py2);
-    float px2_py2_sum_3_by_2 = pow((px2 + py2), 3/2.0);
+    float px2_py2_sqrt = sqrt(px2_py2_sum);
+    float px2_py2_sum_3_by_2 = pow((px2_py2_sum), 3/2.0);
+    
+    if(fabs(px2_py2_sum) < 0.0001) {
+        std::cout << "calculateJacobian() - Error - Division by zero";
+        return Hj;
+    }
     
     // calculating and inserting jacobian values
     Hj << (px / px2_py2_sqrt), (py / px2_py2_sqrt), 0, 0,
