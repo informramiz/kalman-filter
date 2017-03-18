@@ -22,7 +22,6 @@ using Eigen::VectorXd;
 
 
 //measurements
-vector<VectorXd> measurements;
 vector<MeasurementPackage> readMeasurements();
 void runKalmanFilter(const vector<MeasurementPackage> & measurement_pack_list);
 
