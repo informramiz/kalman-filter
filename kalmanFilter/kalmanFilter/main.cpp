@@ -10,6 +10,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <cmath>
 
 #include "Eigen/Dense"
 #include "MeasurementPackage.h"
@@ -24,11 +25,50 @@ using Eigen::VectorXd;
 //measurements
 vector<MeasurementPackage> readMeasurements();
 void runKalmanFilter(const vector<MeasurementPackage> & measurement_pack_list);
+Eigen::MatrixXd calculateJacobian(const VectorXd& x_state);
 
 int main(int argc, const char * argv[]) {
-    vector<MeasurementPackage> measurement_pack_list = readMeasurements();
-    runKalmanFilter(measurement_pack_list);
+    
+//    vector<MeasurementPackage> measurement_pack_list = readMeasurements();
+//    runKalmanFilter(measurement_pack_list);
+    
+    Eigen::VectorXd x_state(4);
+    x_state << 1, 2, 0.2, 0.4;
+    MatrixXd Hj = calculateJacobian(x_state);
+    cout << "Hj: " << endl;
+    cout << Hj << endl;
+    
     return 0;
+}
+
+Eigen::MatrixXd calculateJacobian(const Eigen::VectorXd& x_state) {
+    Eigen::MatrixXd Hj(3, 4);
+    
+    //state parameters
+    float px = x_state(0);
+    float py = x_state(1);
+    float vx = x_state(2);
+    float vy = x_state(3);
+    
+    //divsion by zero check
+    if(px == 0 || py == 0 ) {
+        std::cout << "calculateJacobian() - Error - Division by zero";
+        return Hj;
+    }
+    
+    // calculating common values used in Jacobian
+    float px2 = px * px;
+    float py2 = py * py;
+    float px2_py2_sum = px2 + py2;
+    float px2_py2_sqrt = sqrt(px2 + py2);
+    float px2_py2_sum_3_by_2 = pow((px2 + py2), 3/2.0);
+    
+    // calculating and inserting jacobian values
+    Hj << (px / px2_py2_sqrt), (py / px2_py2_sqrt), 0, 0,
+    (-py / px2_py2_sum), (px / px2_py2_sum), 0, 0,
+    ((py * (vx * py - vy * px)) / px2_py2_sum_3_by_2), ((px * (vy * px - vx * py)) / px2_py2_sum_3_by_2), (px / px2_py2_sqrt), (py / px2_py2_sqrt);
+    
+    return Hj;
 }
 
 void runKalmanFilter(const vector<MeasurementPackage> & measurement_pack_list) {
